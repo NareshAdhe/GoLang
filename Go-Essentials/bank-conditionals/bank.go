@@ -1,55 +1,29 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"strconv"
+	"example.com/bank/fileOps"
+	"github.com/Pallinder/go-randomdata"
 )
 
 const accountBalanceFile = "balance.txt"
 
-func readBalanceFromFile() (float64,error) {
-	data, err := os.ReadFile(accountBalanceFile)
-	fmt.Println(data)
-	if err != nil {
-		return 1000,errors.New("Failed to read from the file!")
-	}
-	balanceText := string(data)
-	fmt.Println(balanceText)
-	balance, err := strconv.ParseFloat(balanceText,64)
-
-	if err != nil {
-		return 1000, errors.New("Failed to parse to float value!")
-	}
-
-	return balance, nil
-}
-
-func writeBalanceToFile(balance float64) error {
-	balanceText := fmt.Sprint(balance)
-	return os.WriteFile(accountBalanceFile, []byte(balanceText), 0644)
-}
-
 func main() {
 
-	accountBalance, err := readBalanceFromFile()
+	accountBalance, err := fileOps.ReadFloatFromFile(accountBalanceFile)
 
 	if err != nil {
 		fmt.Println("Something went wrong!")
 		fmt.Println(err)
 		fmt.Println("--------------")
-		panic("Can't continue. Sorry!")
+		// panic("Can't continue. Sorry!")
 	}
 
 	fmt.Println("Welcome to Go Bank!")
+	fmt.Println("Reach out to us 24/7: ",randomdata.PhoneNumber())
 Loop:
 	for {
-		fmt.Println("What do you want to do?")
-		fmt.Println("1. Check balance")
-		fmt.Println("2. Deposit money")
-		fmt.Println("3. Withdraw money")
-		fmt.Println("4. Exit")
+		presentOptions()
 
 		var choice int
 		fmt.Print("Your choice: ")
@@ -68,7 +42,7 @@ Loop:
 				accountBalance += depositAmount
 				fmt.Println("Balance updated! New amount: ", accountBalance)
 			}
-			err := writeBalanceToFile(accountBalance)
+			err := fileOps.WriteFloatToFile(accountBalanceFile,accountBalance)
 			if err != nil {
 				fmt.Println("Could not save balance:", err)
 			}
@@ -84,7 +58,7 @@ Loop:
 				accountBalance -= withdrawAmount
 				fmt.Println("Balance updated! New amount: ", accountBalance)
 			}
-			err := writeBalanceToFile(accountBalance)
+			err := fileOps.WriteFloatToFile(accountBalanceFile,accountBalance)
 			if err != nil {
 				fmt.Println("Could not save balance:", err)
 			}
