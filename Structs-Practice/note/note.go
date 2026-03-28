@@ -1,0 +1,45 @@
+package note
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
+	"strings"
+	"time"
+)
+
+type Note struct {
+	Title    string
+	Content  string
+	CreatedAt time.Time
+}
+
+func New(Title, Content string) (Note, error) {
+
+	if Title == "" || Content == "" {
+		return Note{}, errors.New("Invalid Input.")
+	}
+
+	return Note{
+		Title:    Title,
+		Content:  Content,
+		CreatedAt: time.Now(),
+	}, nil
+}
+
+func (note Note) Display() {
+	fmt.Printf("Your note Titled %v has the following Content:\n\n%v\n\n", note.Title, note.Content)
+}
+
+func (note Note) Save() error {
+	fileName := strings.ReplaceAll(note.Title, " ", "_")
+	fileName = strings.ToLower(fileName) + ".json"
+	json,err := json.Marshal(note)
+
+	if(err != nil){
+		return err
+	}
+
+	return os.WriteFile(fileName, json, 0644)
+}
