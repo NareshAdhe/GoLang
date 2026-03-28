@@ -1,0 +1,3 @@
+Profit before tax: 500.00
+Profit after tax: 400.00
+Ratio: 1.250
